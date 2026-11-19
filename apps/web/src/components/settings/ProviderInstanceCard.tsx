@@ -59,6 +59,7 @@ import type {
 } from "@t3tools/provider-core/client";
 import {
   deriveProviderSettingsFields,
+  packageFieldText,
   ProviderSettingsForm,
   reconcileRowsDraft,
   seedRowsDraft,
@@ -299,13 +300,23 @@ function ProviderEnvironmentFieldRow(props: {
   readonly environmentId?: EnvironmentId | undefined;
 }) {
   const gt = useGT();
+  const m = useMessages();
   const inputId = `${props.idPrefix}-environment-${props.field.name}`;
   const value = props.variable?.valueRedacted ? "" : (props.variable?.value ?? "");
+  const fieldLabel = packageFieldText(props.field.label, m);
+  const fieldDescription =
+    props.field.description === undefined
+      ? undefined
+      : packageFieldText(props.field.description, m);
+  const fieldPlaceholder =
+    props.field.placeholder === undefined
+      ? undefined
+      : packageFieldText(props.field.placeholder, m);
 
   return (
     <SettingsRow
-      title={<label htmlFor={inputId}>{props.field.label}</label>}
-      description={props.field.description}
+      title={<label htmlFor={inputId}>{fieldLabel}</label>}
+      description={fieldDescription}
       managed={props.managedReason}
       control={
         <div className="flex w-full min-w-0 items-center gap-2 @min-[32rem]/settings-row:w-56">
@@ -317,7 +328,7 @@ function ProviderEnvironmentFieldRow(props: {
               autoComplete="off"
               value={typeof value === "string" ? value : ""}
               onCommit={(next) => props.onCommit(props.field, next)}
-              placeholder={props.field.placeholder}
+              placeholder={fieldPlaceholder}
               spellCheck={false}
             />
           ) : (
@@ -327,10 +338,10 @@ function ProviderEnvironmentFieldRow(props: {
               className="min-w-0 flex-1"
               value={value}
               onCommit={(next) => props.onCommit(props.field, next)}
-              placeholder={props.field.placeholder}
+              placeholder={fieldPlaceholder}
               configured={props.variable?.valueRedacted === true}
               spellCheck={false}
-              aria-label={props.field.label}
+              aria-label={fieldLabel}
               sources={props.secretSources}
               environmentId={props.environmentId}
               onSecretChange={(secret) => props.onSecretChange(props.field, secret)}
@@ -342,7 +353,7 @@ function ProviderEnvironmentFieldRow(props: {
               size="icon-sm"
               variant="ghost-destructive"
               onClick={() => props.onRemove(props.field)}
-              aria-label={gt("Clear {field}", { field: props.field.label })}
+              aria-label={gt("Clear {field}", { field: fieldLabel })}
             >
               <XIcon className="size-3.5" />
             </Button>
@@ -1259,7 +1270,7 @@ export function ProviderInstanceCard({
     <div className="flex shrink-0 items-center gap-1.5">
       {driverOption?.badgeLabel ? (
         <Badge variant="warning" size="sm" className="shrink-0">
-          {driverOption.badgeLabel}
+          {packageFieldText(driverOption.badgeLabel, m)}
         </Badge>
       ) : null}
       {versionCodeNode}

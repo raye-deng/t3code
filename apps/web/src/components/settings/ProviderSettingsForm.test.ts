@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vite-plus/test";
+import { describe, expect, it, vi } from "vite-plus/test";
 import {
   makeProviderSettingsSchema,
   ProviderDriverKind,
@@ -7,15 +7,27 @@ import {
 } from "@t3tools/contracts";
 import * as Schema from "effect/Schema";
 
+import { m } from "../../i18n/messages";
 import { providerClients } from "./providerDriverMeta";
 import {
   deriveProviderSettingsFields,
   nextProviderConfigWithFieldValue,
+  packageFieldText,
   reconcileRowsDraft,
   seedRowsDraft,
 } from "./ProviderSettingsForm";
 
 describe("ProviderSettingsForm helpers", () => {
+  it("resolves provider-authored environment and badge copy", () => {
+    const resolve = vi.fn(m);
+    const typedResolve = resolve as unknown as typeof m;
+
+    expect(packageFieldText("Cursor API key", typedResolve)).toBe("Cursor API key");
+    expect(packageFieldText("Early Access", typedResolve)).toBe("Early Access");
+    expect(packageFieldText("Cursor", typedResolve)).toBe("Cursor");
+    expect(resolve).toHaveBeenCalledTimes(2);
+  });
+
   it("keeps every masked field as a stored secret and offers a reference only where typed so", () => {
     const settingsSchema = makeProviderSettingsSchema({
       token: TrimmedString.pipe(

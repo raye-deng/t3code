@@ -252,9 +252,21 @@ const PACKAGE_FIELD_TEXT: ReadonlyMap<string, string> = new Map([
   ["Google account", msg("Google account")],
   ["Gemini API key", msg("Gemini API key")],
   ["Local command", msg("Local command")],
+  ["Cursor API key", msg("Cursor API key")],
+  ["Kiro API key", msg("Kiro API key")],
+  [
+    "Optional. Overrides browser sign-in for this provider.",
+    msg("Optional. Overrides browser sign-in for this provider."),
+  ],
+  [
+    "Optional. Signs in without `kiro-cli login` (Kiro Pro and above).",
+    msg("Optional. Signs in without `kiro-cli login` (Kiro Pro and above)."),
+  ],
+  ["Paste API key", msg("Paste API key")],
+  ["Early Access", msg("Early Access")],
 ]);
 
-function packageFieldText(text: string, resolve: MessageResolver): string {
+export function packageFieldText(text: string, resolve: MessageResolver): string {
   const entry = PACKAGE_FIELD_TEXT.get(text);
   return entry === undefined ? text : resolve(entry);
 }

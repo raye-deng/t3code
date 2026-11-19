@@ -45,7 +45,11 @@ import { providerClients } from "./providerDriverMeta";
 import { ProviderAccentColorPicker } from "./ProviderAccentColorPicker";
 import { SettingsGroup } from "./SettingsGroup";
 import { SettingsRow } from "./settingsLayout";
-import { ProviderSettingsForm, deriveProviderSettingsFields } from "./ProviderSettingsForm";
+import {
+  ProviderSettingsForm,
+  deriveProviderSettingsFields,
+  packageFieldText,
+} from "./ProviderSettingsForm";
 import { WizardPanel, WizardPopup, WizardHeader, WizardFooter } from "../ui/wizard";
 import {
   ADD_PROVIDER_WIZARD_STEPS,
@@ -106,6 +110,8 @@ function ProviderOptionGrid({
   readonly "aria-label"?: string;
   readonly "aria-labelledby"?: string;
 }) {
+  const m = useMessages();
+
   return (
     <RadioGroup
       {...labelProps}
@@ -136,7 +142,7 @@ function ProviderOptionGrid({
           </RadioPrimitive.Indicator>
           {option.badgeLabel ? (
             <Badge variant="warning" size="sm">
-              {option.badgeLabel}
+              {packageFieldText(option.badgeLabel, m)}
             </Badge>
           ) : null}
         </RadioPrimitive.Root>
