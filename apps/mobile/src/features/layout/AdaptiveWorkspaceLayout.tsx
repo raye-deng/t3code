@@ -1121,7 +1121,11 @@ function AdaptiveWorkspaceLayoutContent(
       {shouldRenderNavigationRail && !workspacePage && hinge === null && sidebarToggleable ? (
         <WorkspacePaneDivider
           accessibilityLabel={gt("Resize session list")}
-          currentWidth={panes.primarySidebarVisible ? (layout.listPaneWidth ?? 0) : 0}
+          currentWidth={
+            panes.primarySidebarVisible
+              ? (layout.listPaneWidth ?? 0) + (layout.listPaneGap ?? 0)
+              : 0
+          }
           liveWidth={renderedSidebarWidth}
           liveWidthBounds={{
             min: 0,

@@ -2,10 +2,16 @@ import { useGT } from "gt-react-native";
 import { useEffectEvent, useState } from "react";
 import { Platform, Pressable, StyleSheet, View, type AccessibilityActionEvent } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { runOnJS, useSharedValue, type SharedValue } from "react-native-reanimated";
+import Animated, {
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  type SharedValue,
+} from "react-native-reanimated";
 import { cn } from "../../lib/cn";
 
 const ACCESSIBILITY_RESIZE_STEP = 24;
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 interface WorkspacePaneDividerProps {
   readonly accessibilityLabel: string;
@@ -27,6 +33,10 @@ export function WorkspacePaneDivider(props: WorkspacePaneDividerProps) {
   const liveWidth = props.liveWidth;
   const liveWidthBounds = props.liveWidthBounds;
   const resizeDirection = props.resizeDirection;
+  const currentWidth = props.currentWidth;
+  const livePositionStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: liveWidth ? liveWidth.value - currentWidth : 0 }],
+  }));
   const handleResizeStart = useEffectEvent(() => {
     setDragging(true);
     props.onResizeStart?.();
@@ -74,7 +84,7 @@ export function WorkspacePaneDivider(props: WorkspacePaneDividerProps) {
 
   return (
     <GestureDetector gesture={resizeGesture}>
-      <Pressable
+      <AnimatedPressable
         className="relative z-[100] -mx-[22px] w-[44px] self-stretch justify-center"
         accessibilityActions={[
           { name: "increment", label: gt("Make pane wider") },
@@ -83,10 +93,11 @@ export function WorkspacePaneDivider(props: WorkspacePaneDividerProps) {
         accessibilityLabel={props.accessibilityLabel}
         accessibilityRole="adjustable"
         accessibilityValue={{
-          now: Math.round(props.currentWidth),
-          text: gt("{width} points wide", { width: Math.round(props.currentWidth) }),
+          now: Math.round(currentWidth),
+          text: gt("{width} points wide", { width: Math.round(currentWidth) }),
         }}
         onAccessibilityAction={handleAccessibilityAction}
+        style={livePositionStyle}
       >
         <View
           className={cn(
@@ -104,7 +115,7 @@ export function WorkspacePaneDivider(props: WorkspacePaneDividerProps) {
             )}
           />
         ) : null}
-      </Pressable>
+      </AnimatedPressable>
     </GestureDetector>
   );
 }
